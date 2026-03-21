@@ -5,13 +5,15 @@ export const quoteFormSchema = z.object({
     contact_name: z.string().min(2, 'Name must be at least 2 characters'),
     email: z.string().email('Please enter a valid email address'),
     phone: z.string().optional(),
-    category: z.enum(['laptop', 'desktop', 'monitor', 'server', 'printer']),
+    category: z.enum(['laptop', 'desktop', 'gpu', 'phone', 'other']),
     quantity: z.number().min(1, 'Quantity must be at least 1'),
     brand_model: z.string().optional(),
     processor: z.string().optional(),
     ram: z.string().optional(),
     storage_type: z.string().optional(),
+    vram: z.string().optional(),
     condition: z.enum(['functional', 'power_on_no_os', 'damaged_screen', 'parts_only']),
+    comments: z.string().optional(),
 });
 
 export type QuoteFormData = z.infer<typeof quoteFormSchema>;

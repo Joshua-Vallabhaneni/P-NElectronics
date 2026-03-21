@@ -18,6 +18,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import {
     Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription
 } from '@/components/ui/dialog';
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProtectedRoute } from '@/components/common/ProtectedRoute';
 import { Loader } from '@/components/common/Loader';
@@ -90,6 +94,9 @@ function InventoryManagementContent() {
     });
     const [lotSelectedItems, setLotSelectedItems] = useState<string[]>([]);
     const [lotItemPickerOpen, setLotItemPickerOpen] = useState(false);
+
+    // Delete confirmation dialog
+    const [deleteTarget, setDeleteTarget] = useState<{ type: 'product' | 'verified' | 'lot'; id: string; name: string } | null>(null);
 
     // Auto-sync: ensure 1:1 match between accepted quotes and verified_items
     const syncVerifiedItems = async () => {
@@ -257,7 +264,7 @@ function InventoryManagementContent() {
         setCreateOpen(true);
     };
 
-    // ── Submit Product ──
+    // ── Submit Product or Verified Item ──
     const handleCreateProduct = async () => {
         if (!formData.title || !formData.condition) {
             toast.error('Please fill in title and condition');
@@ -265,36 +272,55 @@ function InventoryManagementContent() {
         }
         setSaving(true);
         try {
-            const { error } = await supabase.from('products').insert({
-                title: formData.title,
-                description: formData.description || null,
-                category_id: formData.category_id || null,
-                brand: formData.brand || null,
-                model: formData.model || null,
-                processor: formData.processor || null,
-                ram: formData.ram || null,
-                storage: formData.storage || null,
-                condition: formData.condition as ConditionGrade,
-                quantity: formData.quantity,
-                price: formData.price ? parseFloat(formData.price) : null,
-                is_bulk_lot: formData.is_bulk_lot,
-                lot_number: formData.lot_number || null,
-                images: images,
-                is_available: true,
-            });
-            if (error) throw error;
-
-            // Mark verified item as listed
             if (prefillItem) {
+                // Listing a verified item → create a product
+                const { error } = await supabase.from('products').insert({
+                    title: formData.title,
+                    description: formData.description || null,
+                    category_id: formData.category_id || null,
+                    brand: formData.brand || null,
+                    model: formData.model || null,
+                    processor: formData.processor || null,
+                    ram: formData.ram || null,
+                    storage: formData.storage || null,
+                    condition: formData.condition as ConditionGrade,
+                    quantity: formData.quantity,
+                    price: formData.price ? parseFloat(formData.price) : null,
+                    is_bulk_lot: formData.is_bulk_lot,
+                    lot_number: formData.lot_number || null,
+                    images: images,
+                    is_available: true,
+                });
+                if (error) throw error;
                 await supabase.from('verified_items').update({ is_listed: true }).eq('id', prefillItem.id);
+                toast.success('Product listed successfully!');
+            } else {
+                // Creating from scratch → insert into verified_items first
+                const matchedCategory = categories.find(c => c.id === formData.category_id);
+                const { error } = await supabase.from('verified_items').insert({
+                    category: matchedCategory?.slug || 'other',
+                    brand: formData.brand || formData.title || null,
+                    model: formData.model || null,
+                    processor: formData.processor || null,
+                    ram: formData.ram || null,
+                    storage: formData.storage || null,
+                    condition: formData.condition,
+                    quantity: formData.quantity,
+                    quoted_price: formData.price ? parseFloat(formData.price) : null,
+                    admin_notes: formData.description || null,
+                    images: images.length > 0 ? images : null,
+                    is_listed: false,
+                });
+                if (error) throw error;
+                toast.success('Item added to Verified Items!');
+                setActiveTab('verified');
             }
 
-            toast.success('Product listed successfully!');
             setCreateOpen(false);
             fetchData();
         } catch (error) {
-            console.error('Error creating product:', error);
-            toast.error('Failed to create product');
+            console.error('Error creating item:', error);
+            toast.error('Failed to create item');
         } finally {
             setSaving(false);
         }
@@ -316,7 +342,6 @@ function InventoryManagementContent() {
 
     // ── Delete product ──
     const deleteProduct = async (id: string) => {
-        if (!window.confirm('Delete this product?')) return;
         try {
             // Find the product to check if it's a lot
             const product = products.find(p => p.id === id);
@@ -362,6 +387,60 @@ function InventoryManagementContent() {
         }
     };
 
+    // ── Delete verified item ──
+    const deleteVerifiedItem = async (id: string) => {
+        try {
+            // Find the item to check if it's linked to a quote
+            const item = verifiedItems.find(vi => vi.id === id);
+            if (item?.quote_request_id) {
+                // Reset the quote to 'pending' so syncVerifiedItems won't re-create it
+                await supabase.from('quote_requests')
+                    .update({ status: 'rejected' })
+                    .eq('id', item.quote_request_id);
+            }
+            const { error } = await supabase.from('verified_items').delete().eq('id', id);
+            if (error) throw error;
+            toast.success('Verified item deleted');
+            fetchData();
+        } catch {
+            toast.error('Failed to delete');
+        }
+    };
+
+    // ── Handle delete confirmation ──
+    const handleDeleteConfirm = async () => {
+        if (!deleteTarget) return;
+        if (deleteTarget.type === 'product') {
+            await deleteProduct(deleteTarget.id);
+        } else if (deleteTarget.type === 'verified') {
+            await deleteVerifiedItem(deleteTarget.id);
+        } else if (deleteTarget.type === 'lot') {
+            try {
+                const lot = lots.find(l => l.id === deleteTarget.id);
+                if (!lot) return;
+                const { data: lotItems } = await supabase
+                    .from('lot_items')
+                    .select('verified_item_id')
+                    .eq('lot_id', lot.id);
+                if (lotItems && lotItems.length > 0) {
+                    const itemIds = lotItems.map(li => li.verified_item_id).filter((id): id is string => id !== null);
+                    if (itemIds.length > 0) {
+                        await supabase.from('verified_items').update({ is_listed: false }).in('id', itemIds);
+                    }
+                }
+                if (lot.lot_number) {
+                    await supabase.from('products').delete().eq('lot_number', lot.lot_number);
+                }
+                await supabase.from('lots').delete().eq('id', lot.id);
+                toast.success('Lot deleted');
+                fetchData();
+            } catch {
+                toast.error('Failed to delete lot');
+            }
+        }
+        setDeleteTarget(null);
+    };
+
     // ── Create Lot ──
     const handleCreateLot = async () => {
         if (!lotData.lot_number || !lotData.title) {
@@ -396,6 +475,15 @@ function InventoryManagementContent() {
                     .in('id', lotSelectedItems);
             }
 
+            // Aggregate images from all selected verified items
+            const lotImages: string[] = [];
+            for (const viId of lotSelectedItems) {
+                const item = verifiedItems.find(vi => vi.id === viId);
+                if (item?.images) {
+                    lotImages.push(...item.images);
+                }
+            }
+
             // Create a product entry for the lot
             const { error: prodError } = await supabase.from('products').insert({
                 title: `[LOT] ${lotData.title}`,
@@ -405,6 +493,7 @@ function InventoryManagementContent() {
                 price: lotData.total_price ? parseFloat(lotData.total_price) : null,
                 is_bulk_lot: true,
                 lot_number: lotData.lot_number,
+                images: lotImages.length > 0 ? lotImages : null,
                 is_available: true,
             });
 
@@ -553,7 +642,7 @@ function InventoryManagementContent() {
                                                                 {product.is_available ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                                             </Button>
                                                             <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400 hover:text-red-300"
-                                                                onClick={() => deleteProduct(product.id)}>
+                                                                onClick={() => setDeleteTarget({ type: 'product', id: product.id, name: product.title })}>
                                                                 <Trash2 className="w-4 h-4" />
                                                             </Button>
                                                         </div>
@@ -604,30 +693,34 @@ function InventoryManagementContent() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        {item.is_listed ? (
+                                                        <div className="flex items-center gap-2 shrink-0">
+                                                            {item.is_listed ? (
+                                                                <Badge variant="outline" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
+                                                                    Listed
+                                                                </Badge>
+                                                            ) : (
+                                                                <Button
+                                                                    size="sm"
+                                                                    onClick={() => openCreateProduct(item)}
+                                                                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                                >
+                                                                    <ShoppingCart className="w-4 h-4 mr-1" />
+                                                                    List Item
+                                                                </Button>
+                                                            )}
                                                             <Button
-                                                                size="sm"
-                                                                variant="outline"
-                                                                onClick={async () => {
-                                                                    await supabase.from('verified_items').update({ is_listed: false }).eq('id', item.id);
-                                                                    toast.success('Item unlisted');
-                                                                    fetchData();
-                                                                }}
-                                                                className="border-white/20 text-slate-300 hover:bg-white/10 shrink-0"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 text-red-400 hover:text-red-300"
+                                                                onClick={() => setDeleteTarget({
+                                                                    type: 'verified',
+                                                                    id: item.id,
+                                                                    name: [item.brand, item.model].filter(Boolean).join(' ') || item.category,
+                                                                })}
                                                             >
-                                                                <EyeOff className="w-4 h-4 mr-1" />
-                                                                Unlist
+                                                                <Trash2 className="w-4 h-4" />
                                                             </Button>
-                                                        ) : (
-                                                            <Button
-                                                                size="sm"
-                                                                onClick={() => openCreateProduct(item)}
-                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
-                                                            >
-                                                                <ShoppingCart className="w-4 h-4 mr-1" />
-                                                                List Item
-                                                            </Button>
-                                                        )}
+                                                        </div>
                                                     </div>
                                                 </CardContent>
                                             </Card>
@@ -683,35 +776,7 @@ function InventoryManagementContent() {
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 className="h-8 w-8 text-red-400 hover:text-red-300"
-                                                                onClick={async () => {
-                                                                    if (!window.confirm('Delete this lot and its associated product listing?')) return;
-                                                                    try {
-                                                                        // Unlist verified items in this lot
-                                                                        const { data: lotItems } = await supabase
-                                                                            .from('lot_items')
-                                                                            .select('verified_item_id')
-                                                                            .eq('lot_id', lot.id);
-
-                                                                        if (lotItems && lotItems.length > 0) {
-                                                                            const itemIds = lotItems.map(li => li.verified_item_id).filter((id): id is string => id !== null);
-                                                                            if (itemIds.length > 0) {
-                                                                                await supabase.from('verified_items').update({ is_listed: false }).in('id', itemIds);
-                                                                            }
-                                                                        }
-
-                                                                        // Delete associated product listing
-                                                                        if (lot.lot_number) {
-                                                                            await supabase.from('products').delete().eq('lot_number', lot.lot_number);
-                                                                        }
-
-                                                                        // Delete the lot (lot_items cascade)
-                                                                        await supabase.from('lots').delete().eq('id', lot.id);
-                                                                        toast.success('Lot deleted');
-                                                                        fetchData();
-                                                                    } catch (error) {
-                                                                        toast.error('Failed to delete lot');
-                                                                    }
-                                                                }}
+                                                                onClick={() => setDeleteTarget({ type: 'lot', id: lot.id, name: lot.title })}
                                                             >
                                                                 <Trash2 className="w-4 h-4" />
                                                             </Button>
@@ -731,11 +796,11 @@ function InventoryManagementContent() {
                 <Dialog open={createOpen} onOpenChange={setCreateOpen}>
                     <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
-                            <DialogTitle>{prefillItem ? 'List Verified Item' : 'Create New Product'}</DialogTitle>
+                            <DialogTitle>{prefillItem ? 'List Verified Item' : 'Add New Item'}</DialogTitle>
                             <DialogDescription className="text-slate-400">
                                 {prefillItem
                                     ? 'Review pre-filled details and adjust before listing.'
-                                    : 'Fill in product details to create a new inventory listing.'}
+                                    : 'Fill in item details. The item will be added to Verified Items where you can then list it.'}
                             </DialogDescription>
                         </DialogHeader>
 
@@ -875,7 +940,7 @@ function InventoryManagementContent() {
                             <Button onClick={handleCreateProduct} disabled={saving}
                                 className="bg-emerald-600 hover:bg-emerald-700 text-white">
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                                {prefillItem ? 'List Item' : 'Create Product'}
+                                {prefillItem ? 'List Item' : 'Add Item'}
                             </Button>
                         </DialogFooter>
                     </DialogContent>
@@ -973,6 +1038,24 @@ function InventoryManagementContent() {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* ── Delete Confirmation Dialog ── */}
+                <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}>
+                    <AlertDialogContent className="bg-slate-900 border-white/10">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">Delete {deleteTarget?.type === 'lot' ? 'Lot' : deleteTarget?.type === 'verified' ? 'Verified Item' : 'Product'}?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-slate-400">
+                                Are you sure you want to delete <span className="text-white font-medium">"{deleteTarget?.name}"</span>? This action cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="border-white/20 text-white hover:bg-white/10">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+                                Delete
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );

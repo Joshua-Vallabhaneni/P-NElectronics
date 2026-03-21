@@ -83,10 +83,10 @@ CREATE POLICY "Admins can manage categories"
 -- Insert default categories
 INSERT INTO categories (name, slug, description, icon) VALUES
   ('Laptops', 'laptop', 'Business and consumer laptops', 'Laptop'),
-  ('Desktops', 'desktop', 'Desktop computers and workstations', 'Monitor'),
-  ('Monitors', 'monitor', 'LCD, LED, and other display monitors', 'Monitor'),
-  ('Servers', 'server', 'Enterprise servers and networking equipment', 'Server'),
-  ('Printers', 'printer', 'Printers, copiers, and multifunction devices', 'Printer')
+  ('Desktops', 'desktop', 'Desktop computers and workstations', 'HardDrive'),
+  ('GPUs', 'gpu', 'Graphics processing units', 'Cpu'),
+  ('Phones', 'phone', 'Smartphones and mobile devices', 'Smartphone'),
+  ('Other', 'other', 'Other IT equipment and assets', 'Package')
 ON CONFLICT (slug) DO NOTHING;
 
 -- ============================================

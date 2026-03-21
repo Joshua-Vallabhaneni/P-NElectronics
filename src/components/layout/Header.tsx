@@ -18,10 +18,8 @@ const userNavigation = [
 
 const adminNavigation = [
     { name: 'Home', href: '/' },
-    { name: 'Services', href: '/services' },
     { name: 'Submissions', href: '/admin/submissions' },
     { name: 'Manage Inventory', href: '/admin/inventory' },
-    { name: 'Dashboard', href: '/admin' },
 ];
 
 export function Header() {

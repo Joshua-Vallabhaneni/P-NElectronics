@@ -5,55 +5,59 @@ import { createServerSupabaseClient } from '@/lib/supabase-server';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
-    const supabase = createServerSupabaseClient();
+  const supabase = createServerSupabaseClient();
 
-    try {
-        const body = await request.json();
+  try {
+    const body = await request.json();
 
-        const {
-            company_name,
-            contact_name,
-            email,
-            phone,
-            category,
-            quantity,
-            brand_model,
-            processor,
-            ram,
-            storage_type,
-            condition,
-            spreadsheet_url,
-            image_urls,
-        } = body;
+    const {
+      company_name,
+      contact_name,
+      email,
+      phone,
+      category,
+      quantity,
+      brand_model,
+      processor,
+      ram,
+      storage_type,
+      vram,
+      condition,
+      comments,
+      spreadsheet_url,
+      image_urls,
+    } = body;
 
-        // Save to database
-        const { data: quoteData, error: dbError } = await supabase
-            .from('quote_requests')
-            .insert({
-                company_name: company_name || null,
-                contact_name,
-                email,
-                phone: phone || null,
-                category,
-                quantity,
-                brand_model: brand_model || null,
-                processor: processor || null,
-                ram: ram || null,
-                storage_type: storage_type || null,
-                condition,
-                spreadsheet_url: spreadsheet_url || null,
-                image_urls: image_urls || null,
-            })
-            .select()
-            .single();
+    // Save to database
+    const { data: quoteData, error: dbError } = await supabase
+      .from('quote_requests')
+      .insert({
+        company_name: company_name || null,
+        contact_name,
+        email,
+        phone: phone || null,
+        category,
+        quantity,
+        brand_model: brand_model || null,
+        processor: processor || null,
+        ram: ram || null,
+        storage_type: storage_type || null,
+        vram: vram || null,
+        condition,
+        comments: comments || null,
+        spreadsheet_url: spreadsheet_url || null,
+        image_urls: image_urls || null,
+      })
+      .select()
+      .single();
 
-        if (dbError) {
-            console.error('Database error:', dbError);
-            return NextResponse.json({ error: 'Failed to save quote request', details: dbError.message }, { status: 500 });
-        }
+    if (dbError) {
+      console.error('Database error:', dbError);
+      return NextResponse.json({ error: 'Failed to save quote request', details: dbError.message }, { status: 500 });
+    }
 
-        // Send email notification
-        const emailHtml = `
+    // Send email notification
+    const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #10B981;">New Quote Request Received</h2>
         
@@ -74,6 +78,8 @@ export async function POST(request: NextRequest) {
           ${processor ? `<p><strong>Processor:</strong> ${processor}</p>` : ''}
           ${ram ? `<p><strong>RAM:</strong> ${ram}</p>` : ''}
           ${storage_type ? `<p><strong>Storage:</strong> ${storage_type}</p>` : ''}
+          ${vram ? `<p><strong>VRAM:</strong> ${vram}</p>` : ''}
+          ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ''}
         </div>
 
         ${spreadsheet_url ? `
@@ -95,22 +101,22 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-        // Send the email
-        const { error: emailError } = await resend.emails.send({
-            from: 'P&N Electronics <onboarding@resend.dev>',
-            to: ['pjvallabhaneni@gmail.com'],
-            subject: `New Quote Request: ${quantity}x ${category} from ${contact_name}`,
-            html: emailHtml,
-        });
+    // Send the email
+    const { error: emailError } = await resend.emails.send({
+      from: 'P&N Electronics <onboarding@resend.dev>',
+      to: ['pjvallabhaneni@gmail.com'],
+      subject: `New Quote Request: ${quantity}x ${category} from ${contact_name}`,
+      html: emailHtml,
+    });
 
-        if (emailError) {
-            console.error('Email error:', emailError);
-            // Don't fail the request if email fails - quote is still saved
-        }
-
-        return NextResponse.json({ success: true, data: quoteData });
-    } catch (error) {
-        console.error('Error processing quote:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    if (emailError) {
+      console.error('Email error:', emailError);
+      // Don't fail the request if email fails - quote is still saved
     }
+
+    return NextResponse.json({ success: true, data: quoteData });
+  } catch (error) {
+    console.error('Error processing quote:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

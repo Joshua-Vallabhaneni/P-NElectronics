@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Package, CheckCircle, Laptop, Monitor, Server, Printer, HardDrive, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, Package, CheckCircle, Laptop, Monitor, Server, Printer, HardDrive, Smartphone, Cpu, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -38,9 +38,9 @@ const conditionLabels: Record<ConditionGrade, { label: string; description: stri
 const categoryIcons: Record<string, any> = {
     laptop: Laptop,
     desktop: HardDrive,
-    monitor: Monitor,
-    server: Server,
-    printer: Printer,
+    gpu: Cpu,
+    phone: Smartphone,
+    other: Package,
 };
 
 export default function ProductDetailPage() {
@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
     const CategoryIcon = categoryIcons[product.category?.slug || 'laptop'] || Package;
 
     return (
-        <div className="min-h-screen bg-slate-900 pt-8 pb-16">
+        <div className="min-h-screen bg-slate-900 pt-20 pb-16">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
                 <Link href="/inventory" className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8">

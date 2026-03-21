@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Filter, Grid3X3, List, Package, Laptop, Monitor, Server, Printer, HardDrive, X } from 'lucide-react';
+import { Search, Filter, Grid3X3, List, Package, Laptop, Monitor, Server, Printer, HardDrive, Smartphone, Cpu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,9 +23,9 @@ const conditionLabels: Record<ConditionGrade, { label: string; color: string }> 
 const categoryIcons: Record<string, any> = {
     laptop: Laptop,
     desktop: HardDrive,
-    monitor: Monitor,
-    server: Server,
-    printer: Printer,
+    gpu: Cpu,
+    phone: Smartphone,
+    other: Package,
 };
 
 function GradingLegend() {

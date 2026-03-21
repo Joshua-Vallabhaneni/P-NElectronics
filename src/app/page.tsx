@@ -1,13 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { Shield, Recycle, Globe, Check } from "lucide-react";
 import Link from "next/link";
 import { GradientWave } from "@/components/ui/gradient-wave";
 import { Button } from "@/components/ui/button";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function HomePage() {
+  const router = useRouter();
+  const { isAdmin, user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user && isAdmin) {
+      router.replace("/admin");
+    }
+  }, [loading, user, isAdmin, router]);
   return (
     <div>
       {/* ── Hero — 75vh, not full-screen ── */}

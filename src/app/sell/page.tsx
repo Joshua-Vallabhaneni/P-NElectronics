@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileSpreadsheet, Image, CheckCircle, AlertCircle, Download, Loader2 } from 'lucide-react';
+import { Upload, FileSpreadsheet, Image, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,9 +20,9 @@ import { toast } from 'sonner';
 const categories = [
     { value: 'laptop', label: 'Laptop' },
     { value: 'desktop', label: 'Desktop' },
-    { value: 'monitor', label: 'Monitor' },
-    { value: 'server', label: 'Server' },
-    { value: 'printer', label: 'Printer' },
+    { value: 'gpu', label: 'GPU' },
+    { value: 'phone', label: 'Phone' },
+    { value: 'other', label: 'Other' },
 ];
 
 const conditions = [
@@ -34,6 +34,7 @@ const conditions = [
 
 const ramOptions = ['4GB', '8GB', '16GB', '32GB+'];
 const storageOptions = ['HDD', 'SSD'];
+const vramOptions = ['4GB', '6GB', '8GB', '12GB', '16GB', '24GB+'];
 
 function ImageUploader({ onUpload }: { onUpload: (urls: string[]) => void }) {
     const [uploading, setUploading] = useState(false);
@@ -216,9 +217,13 @@ export default function SellPage() {
             processor: '',
             ram: '',
             storage_type: '',
+            vram: '',
             condition: undefined,
+            comments: '',
         },
     });
+
+    const selectedCategory = form.watch('category');
 
     const onSubmit = async (data: QuoteFormData) => {
         setSubmitting(true);
@@ -240,7 +245,9 @@ export default function SellPage() {
                     processor: data.processor || null,
                     ram: data.ram || null,
                     storage_type: data.storage_type || null,
+                    vram: data.vram || null,
                     condition: data.condition,
+                    comments: data.comments || null,
                     spreadsheet_url: spreadsheetUrl,
                     image_urls: imageUrls,
                 }),
@@ -469,7 +476,7 @@ export default function SellPage() {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        placeholder="e.g., Dell Latitude 5420"
+                                                        placeholder={selectedCategory === 'gpu' ? 'e.g., NVIDIA RTX 4090' : selectedCategory === 'phone' ? 'e.g., iPhone 15 Pro' : 'e.g., Dell Latitude 5420'}
                                                         className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                                                     />
                                                 </FormControl>
@@ -478,73 +485,161 @@ export default function SellPage() {
                                         )}
                                     />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <FormField
-                                            control={form.control}
-                                            name="processor"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-slate-300">Processor (CPU)</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            {...field}
-                                                            placeholder="e.g., Intel i5 10th Gen"
-                                                            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="ram"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-slate-300">Memory (RAM)</FormLabel>
-                                                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                                    {/* Dynamic fields based on category */}
+                                    {(selectedCategory === 'laptop' || selectedCategory === 'desktop') && (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="processor"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Processor (CPU)</FormLabel>
                                                         <FormControl>
-                                                            <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                                                                <SelectValue placeholder="Select RAM" />
-                                                            </SelectTrigger>
+                                                            <Input
+                                                                {...field}
+                                                                placeholder="e.g., Intel i5 10th Gen"
+                                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                                                            />
                                                         </FormControl>
-                                                        <SelectContent>
-                                                            {ramOptions.map((ram) => (
-                                                                <SelectItem key={ram} value={ram}>
-                                                                    {ram}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="storage_type"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="text-slate-300">Storage Type</FormLabel>
-                                                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="ram"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Memory (RAM)</FormLabel>
+                                                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                                                            <FormControl>
+                                                                <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                                                                    <SelectValue placeholder="Select RAM" />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                {ramOptions.map((ram) => (
+                                                                    <SelectItem key={ram} value={ram}>
+                                                                        {ram}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="storage_type"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Storage Type</FormLabel>
+                                                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                                                            <FormControl>
+                                                                <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                                                                    <SelectValue placeholder="Select type" />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                {storageOptions.map((type) => (
+                                                                    <SelectItem key={type} value={type}>
+                                                                        {type}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {selectedCategory === 'gpu' && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="processor"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Chipset</FormLabel>
                                                         <FormControl>
-                                                            <SelectTrigger className="bg-white/5 border-white/10 text-white">
-                                                                <SelectValue placeholder="Select type" />
-                                                            </SelectTrigger>
+                                                            <Input
+                                                                {...field}
+                                                                placeholder="e.g., AD102, GA102"
+                                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                                                            />
                                                         </FormControl>
-                                                        <SelectContent>
-                                                            {storageOptions.map((type) => (
-                                                                <SelectItem key={type} value={type}>
-                                                                    {type}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="vram"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">VRAM</FormLabel>
+                                                        <Select onValueChange={field.onChange} value={field.value || ''}>
+                                                            <FormControl>
+                                                                <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                                                                    <SelectValue placeholder="Select VRAM" />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                {vramOptions.map((v) => (
+                                                                    <SelectItem key={v} value={v}>
+                                                                        {v}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    )}
+
+                                    {selectedCategory === 'phone' && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="storage_type"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Storage Capacity</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                {...field}
+                                                                placeholder="e.g., 128GB, 256GB"
+                                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="ram"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-slate-300">Memory (RAM)</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                {...field}
+                                                                placeholder="e.g., 6GB, 8GB"
+                                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    )}
 
                                     <FormField
                                         control={form.control}
@@ -566,6 +661,24 @@ export default function SellPage() {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="comments"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-slate-300">Additional Comments</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        {...field}
+                                                        placeholder="Any other details about the item(s) — cosmetic condition, accessories included, batch info, etc."
+                                                        className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 min-h-[80px]"
+                                                    />
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -592,12 +705,6 @@ export default function SellPage() {
                                     </p>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <Button variant="outline" className="border-white/20 text-white hover:bg-white/10" asChild>
-                                        <a href="/inventory-template.csv" download>
-                                            <Download className="mr-2 w-4 h-4" />
-                                            Download CSV Template
-                                        </a>
-                                    </Button>
                                     <SpreadsheetUploader onUpload={setSpreadsheetUrl} />
                                 </CardContent>
                             </Card>
