@@ -34,14 +34,24 @@ const statusConfig: Record<QuoteStatus, { label: string; color: string; dot: str
 };
 
 const categoryLabels: Record<string, string> = {
-    laptop: 'Laptop', desktop: 'Desktop', monitor: 'Monitor', server: 'Server', printer: 'Printer',
+    laptop: 'Laptop',
+    desktop: 'Desktop',
+    gpu: 'GPU',
+    phone: 'Phone',
+    other: 'Other Asset',
+    monitor: 'Monitor',
+    server: 'Server',
+    printer: 'Printer',
 };
 
 const conditionLabels: Record<string, string> = {
+    grade_a: 'Grade A',
+    grade_b: 'Grade B',
+    refurbished: 'Refurbished',
+    parts_only: 'Parts Only',
     functional: 'Fully Functional',
     power_on_no_os: 'Powers On (No OS)',
     damaged_screen: 'Damaged Screen',
-    parts_only: 'Scrap/Parts Only',
 };
 
 function SubmissionsContent() {
@@ -485,6 +495,9 @@ function SubmissionsContent() {
                                                     <SelectContent className="bg-[#121212] border-white/10 text-white">
                                                         <SelectItem value="laptop">Laptop</SelectItem>
                                                         <SelectItem value="desktop">Desktop</SelectItem>
+                                                        <SelectItem value="gpu">GPU</SelectItem>
+                                                        <SelectItem value="phone">Phone</SelectItem>
+                                                        <SelectItem value="other">Other</SelectItem>
                                                         <SelectItem value="monitor">Monitor</SelectItem>
                                                         <SelectItem value="server">Server</SelectItem>
                                                         <SelectItem value="printer">Printer</SelectItem>
@@ -498,10 +511,13 @@ function SubmissionsContent() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-[#121212] border-white/10 text-white">
+                                                        <SelectItem value="grade_a">Grade A (Excellent)</SelectItem>
+                                                        <SelectItem value="grade_b">Grade B (Minor Wear)</SelectItem>
+                                                        <SelectItem value="refurbished">Refurbished</SelectItem>
+                                                        <SelectItem value="parts_only">Scrap/Parts Only</SelectItem>
                                                         <SelectItem value="functional">Fully Functional</SelectItem>
                                                         <SelectItem value="power_on_no_os">Powers On (No OS)</SelectItem>
                                                         <SelectItem value="damaged_screen">Damaged Screen</SelectItem>
-                                                        <SelectItem value="parts_only">Scrap/Parts Only</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>

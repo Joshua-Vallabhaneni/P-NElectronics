@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useDropzone } from 'react-dropzone';
 import {
     ArrowLeft, Plus, Package, Pencil, Trash2, Eye, EyeOff, Layers,
-    CheckCircle, Search, Loader2, X, Image as ImageIcon, ShoppingCart
+    CheckCircle, Search, Loader2, X, Image as ImageIcon, ShoppingCart, Edit,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,6 +66,8 @@ function InventoryManagementContent() {
     const [createOpen, setCreateOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [prefillItem, setPrefillItem] = useState<VerifiedItem | null>(null);
+    const [editingVerifiedItem, setEditingVerifiedItem] = useState<VerifiedItem | null>(null);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [uploadingImages, setUploadingImages] = useState(false);
     const [images, setImages] = useState<string[]>([]);
     const [formData, setFormData] = useState({
@@ -246,8 +248,10 @@ function InventoryManagementContent() {
 
     // ── Open Create Product (blank or from verified item) ──
     const openCreateProduct = (item?: VerifiedItem) => {
+        setPrefillItem(item || null);
+        setEditingVerifiedItem(null);
+        setEditingProduct(null);
         if (item) {
-            setPrefillItem(item);
             const mappedCondition = conditionMapping[item.condition] || 'B';
             const matchedCategory = categories.find(c => c.slug === item.category);
             setFormData({
@@ -267,7 +271,6 @@ function InventoryManagementContent() {
             });
             setImages(item.images || []);
         } else {
-            setPrefillItem(null);
             setFormData({
                 title: '', description: '', category_id: '', brand: '', model: '',
                 processor: '', ram: '', storage: '', condition: '', quantity: 1,
@@ -275,6 +278,55 @@ function InventoryManagementContent() {
             });
             setImages([]);
         }
+        setCreateOpen(true);
+    };
+
+    // ── Open Edit Verified Item ──
+    const openEditVerifiedItem = (item: VerifiedItem) => {
+        setEditingVerifiedItem(item);
+        setPrefillItem(null);
+        setEditingProduct(null);
+        const matchedCategory = categories.find(c => c.slug === item.category);
+        setFormData({
+            title: [item.brand, item.model].filter(Boolean).join(' ') || item.category,
+            description: item.admin_notes || '',
+            category_id: matchedCategory?.id || '',
+            brand: item.brand || '',
+            model: item.model || '',
+            processor: item.processor || '',
+            ram: item.ram || '',
+            storage: item.storage || '',
+            condition: item.condition as ConditionGrade,
+            quantity: item.quantity,
+            price: item.quoted_price?.toString() || '',
+            is_bulk_lot: false,
+            lot_number: '',
+        });
+        setImages(item.images || []);
+        setCreateOpen(true);
+    };
+
+    // ── Open Edit Product ──
+    const openEditProduct = (product: Product) => {
+        setEditingProduct(product);
+        setPrefillItem(null);
+        setEditingVerifiedItem(null);
+        setFormData({
+            title: product.title,
+            description: product.description || '',
+            category_id: product.category_id || '',
+            brand: product.brand || '',
+            model: product.model || '',
+            processor: product.processor || '',
+            ram: product.ram || '',
+            storage: product.storage || '',
+            condition: product.condition,
+            quantity: product.quantity,
+            price: product.price?.toString() || '',
+            is_bulk_lot: product.is_bulk_lot,
+            lot_number: product.lot_number || '',
+        });
+        setImages(product.images || []);
         setCreateOpen(true);
     };
 
@@ -308,6 +360,52 @@ function InventoryManagementContent() {
                 if (error) throw error;
                 await supabase.from('verified_items').update({ is_listed: true }).eq('id', prefillItem.id);
                 toast.success('Product listed successfully!');
+            } else if (editingProduct) {
+                // Editing an existing listed product
+                const { error } = await supabase.from('products').update({
+                    title: formData.title,
+                    description: formData.description || null,
+                    category_id: formData.category_id || null,
+                    brand: formData.brand || null,
+                    model: formData.model || null,
+                    processor: formData.processor || null,
+                    ram: formData.ram || null,
+                    storage: formData.storage || null,
+                    condition: formData.condition as ConditionGrade,
+                    quantity: formData.quantity,
+                    price: formData.price ? parseFloat(formData.price) : null,
+                    is_bulk_lot: formData.is_bulk_lot,
+                    lot_number: formData.lot_number || null,
+                    images: images,
+                }).eq('id', editingProduct.id);
+                if (error) throw error;
+                toast.success('Product updated successfully!');
+            } else if (editingVerifiedItem) {
+                // Editing an existing verified item
+                const matchedCategory = categories.find(c => c.id === formData.category_id);
+                // If brand/model are empty but title is set, try to use title
+                let finalBrand = formData.brand;
+                let finalModel = formData.model;
+                if (!finalBrand && !finalModel && formData.title) {
+                    finalBrand = formData.title.split(' ')[0];
+                    finalModel = formData.title.split(' ').slice(1).join(' ');
+                }
+
+                const { error } = await supabase.from('verified_items').update({
+                    category: matchedCategory?.slug || 'other',
+                    brand: finalBrand || null,
+                    model: finalModel || null,
+                    processor: formData.processor || null,
+                    ram: formData.ram || null,
+                    storage: formData.storage || null,
+                    condition: formData.condition,
+                    quantity: formData.quantity,
+                    quoted_price: formData.price ? parseFloat(formData.price) : null,
+                    admin_notes: formData.description || null,
+                    images: images.length > 0 ? images : null,
+                }).eq('id', editingVerifiedItem.id);
+                if (error) throw error;
+                toast.success('Verified item updated!');
             } else {
                 // Creating from scratch → insert into verified_items first
                 const matchedCategory = categories.find(c => c.id === formData.category_id);
@@ -662,6 +760,10 @@ function InventoryManagementContent() {
                                                     </Badge>
 
                                                     <div className="flex items-center gap-1 pl-4 border-l border-white/10">
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-full transition-all"
+                                                            onClick={(e) => { e.stopPropagation(); openEditProduct(product); }}>
+                                                            <Pencil className="w-3.5 h-3.5" />
+                                                        </Button>
                                                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-white hover:bg-white/5 rounded-full transition-all"
                                                             onClick={(e) => { e.stopPropagation(); toggleAvailability(product); }}>
                                                             {product.is_available ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -733,15 +835,26 @@ function InventoryManagementContent() {
                                                             {(item as any).lotInfo ? `Lot: ${(item as any).lotInfo.number}` : 'Listed'}
                                                         </Badge>
                                                     ) : (
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                            onClick={(e) => { e.stopPropagation(); openCreateProduct(item); }}
-                                                            className="h-8 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all duration-200"
-                                                        >
-                                                            <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
-                                                            List Item
-                                                        </Button>
+                                                        <div className="flex items-center gap-2">
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                onClick={(e) => { e.stopPropagation(); openEditVerifiedItem(item); }}
+                                                                className="h-8 px-3 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all font-medium"
+                                                            >
+                                                                <Edit className="w-3.5 h-3.5 mr-1.5" />
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                onClick={(e) => { e.stopPropagation(); openCreateProduct(item); }}
+                                                                className="h-8 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all duration-200"
+                                                            >
+                                                                <ShoppingCart className="w-3.5 h-3.5 mr-1.5" />
+                                                                List Item
+                                                            </Button>
+                                                        </div>
                                                     )}
 
                                                     <div className="flex items-center pl-3 border-l border-white/10">
@@ -845,12 +958,16 @@ function InventoryManagementContent() {
                     >
                         <SheetHeader className="p-8 pb-4 border-b border-white/5">
                             <SheetTitle className="text-2xl font-bold tracking-tight text-white">
-                                {prefillItem ? 'List Verified Item' : 'Add New Item'}
+                                {prefillItem ? 'List Verified Item' : editingProduct ? 'Edit Product' : editingVerifiedItem ? 'Edit Verified Item' : 'Add New Item'}
                             </SheetTitle>
                             <SheetDescription className="text-slate-500 text-sm">
                                 {prefillItem
                                     ? 'Review pre-filled details and adjust before listing.'
-                                    : 'Fill in item details. The item will be added to Verified Items where you can then list it.'}
+                                    : editingProduct
+                                        ? 'Update the public product listing details.'
+                                        : editingVerifiedItem
+                                            ? 'Modify details of the unlisted verified item.'
+                                            : 'Fill in item details. The item will be added to Verified Items where you can then list it.'}
                             </SheetDescription>
                         </SheetHeader>
 
@@ -862,15 +979,17 @@ function InventoryManagementContent() {
                                     <div className="h-[1px] flex-1 bg-white/5" />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Title *</Label>
-                                    <Input
-                                        value={formData.title}
-                                        onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                        placeholder="e.g., Dell Latitude 5520 - Intel i5"
-                                        className="bg-white/[0.03] border-white/10 text-white text-sm h-11 focus-visible:ring-emerald-500/30 transition-all"
-                                    />
-                                </div>
+                                {!editingVerifiedItem && (
+                                    <div className="space-y-2">
+                                        <Label className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Title *</Label>
+                                        <Input
+                                            value={formData.title}
+                                            onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                            placeholder="e.g., Dell Latitude 5520 - Intel i5"
+                                            className="bg-white/[0.03] border-white/10 text-white text-sm h-11 focus-visible:ring-emerald-500/30 transition-all"
+                                        />
+                                    </div>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Description</Label>
@@ -1034,7 +1153,7 @@ function InventoryManagementContent() {
                             <Button variant="ghost" onClick={() => setCreateOpen(false)} className="text-slate-400 hover:text-white hover:bg-white/5">Cancel</Button>
                             <Button onClick={handleCreateProduct} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
                                 {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                                {prefillItem ? 'List Product' : 'Add Item'}
+                                {prefillItem ? 'List Product' : (editingProduct || editingVerifiedItem) ? 'Save Item Details' : 'Add Item'}
                             </Button>
                         </SheetFooter>
                     </SheetContent>

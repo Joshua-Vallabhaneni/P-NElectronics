@@ -68,12 +68,12 @@ export default function HomePage() {
             transition={{ duration: 0.4, delay: 0.6 }}
             className="flex items-center gap-4 mt-10 flex-wrap justify-center"
           >
-            <Link href="/services">
+            <Link href="/about">
               <Button
                 variant="secondary"
                 className="h-12 rounded-full cursor-pointer px-10 bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border border-white/20 font-bold text-sm uppercase tracking-widest transition-all hover:scale-105"
               >
-                Our Services
+                About
               </Button>
             </Link>
             <Link href="/inventory">
@@ -102,7 +102,7 @@ export default function HomePage() {
           transition={{ delay: 1.5, duration: 1 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Scroll to Explore</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Scroll to Learn More</span>
           <div className="w-[1px] h-12 bg-gradient-to-t from-emerald-500/50 to-transparent" />
         </motion.div>
       </section>

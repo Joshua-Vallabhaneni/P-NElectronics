@@ -15,11 +15,11 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function ServicesPage() {
+export default function AboutPage() {
     return (
-        <div className="min-h-screen pt-20 pb-4 selection:bg-emerald-500/30">
+        <div className="min-h-screen pt-12 pb-4 selection:bg-emerald-500/30">
             {/* ── Section 1: Hero ── */}
-            <section className="mx-auto max-w-[1200px] px-6 pt-24 pb-20">
+            <section className="mx-auto max-w-[1200px] px-6 pt-12 pb-20">
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -234,10 +234,10 @@ export default function ServicesPage() {
                     <div className="relative z-10 lg:flex items-center justify-between gap-12">
                         <div className="max-w-md">
                             <h3 className="text-4xl font-bold text-white tracking-tight mb-6">
-                                Ready for deployment?
+                                Ready to offload?
                             </h3>
                             <p className="text-lg text-zinc-300 leading-relaxed mb-10">
-                                Connect with our logistics team to schedule your first inventory assessment. NIST-compliant, enterprise-ready.
+                                Submit your hardware list today for a premium buyback quote. We handle the data remediation, you recover the value.
                             </p>
                         </div>
                         <Link href="/sell">

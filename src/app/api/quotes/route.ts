@@ -72,10 +72,10 @@ export async function POST(request: NextRequest) {
           <h3 style="margin-top: 0; color: #334155;">Item Details</h3>
           <p><strong>Category:</strong> ${category}</p>
           <p><strong>Quantity:</strong> ${quantity}</p>
-          <p><strong>Condition:</strong> ${condition.replace('_', ' ')}</p>
+          <p><strong>Condition:</strong> ${condition.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</p>
           ${brand_model ? `<p><strong>Brand/Model:</strong> ${brand_model}</p>` : ''}
           ${processor ? `<p><strong>Processor:</strong> ${processor}</p>` : ''}
-          ${ram ? `<p><strong>RAM:</strong> ${ram}</p>` : ''}
+          ${ram ? `<p><strong>RAM/Lock Status:</strong> ${ram}</p>` : ''}
           ${storage_type ? `<p><strong>Storage:</strong> ${storage_type}</p>` : ''}
           ${vram ? `<p><strong>VRAM:</strong> ${vram}</p>` : ''}
           ${comments ? `<p><strong>Comments:</strong> ${comments}</p>` : ''}
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         ` : ''}
 
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 14px;">
-          <p>View and respond to this quote in your <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin/quotes">Admin Dashboard</a></p>
+          <p>View and respond to this quote in your <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin/submissions">Admin Dashboard</a></p>
         </div>
       </div>
     `;

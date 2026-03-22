@@ -19,7 +19,7 @@ export function Footer() {
             ]}
             mainLinks={[
                 { href: "/", label: "Home" },
-                { href: "/services", label: "Services" },
+                { href: "/about", label: "About" },
                 { href: "/inventory", label: "Inventory" },
                 { href: "/sell", label: "Sell To Us" },
             ]}

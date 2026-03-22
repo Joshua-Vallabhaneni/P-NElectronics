@@ -12,7 +12,7 @@ export const quoteFormSchema = z.object({
     ram: z.string().optional(),
     storage_type: z.string().optional(),
     vram: z.string().optional(),
-    condition: z.enum(['functional', 'power_on_no_os', 'damaged_screen', 'parts_only']),
+    condition: z.enum(['grade_a', 'grade_b', 'refurbished', 'parts_only']),
     comments: z.string().optional(),
 });
 

@@ -27,10 +27,10 @@ const categories = [
 ];
 
 const conditions = [
-    { value: 'functional', label: 'Fully Functional' },
-    { value: 'power_on_no_os', label: 'Powers On (No OS)' },
-    { value: 'damaged_screen', label: 'Damaged Screen' },
-    { value: 'parts_only', label: 'Scrap/Parts Only' },
+    { value: 'grade_a', label: 'Grade A (Excellent)' },
+    { value: 'grade_b', label: 'Grade B (Minor Wear)' },
+    { value: 'refurbished', label: 'Refurbished' },
+    { value: 'parts_only', label: 'Scrap / Parts Only' },
 ];
 
 const ramOptions = ['4GB', '8GB', '16GB', '32GB+'];
@@ -316,7 +316,7 @@ export default function SellPage() {
     return (
         <div className="min-h-screen pt-14 pb-20">
             {/* Progress Bar */}
-            <div className="fixed top-20 left-0 right-0 z-50 px-6 max-w-4xl mx-auto hidden md:block">
+            <div className="fixed top-20 left-0 right-0 z-50 px-12 max-w-4xl mx-auto hidden md:block">
                 <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                     <motion.div
                         initial={{ width: "25%" }}
@@ -388,7 +388,7 @@ export default function SellPage() {
                                             name="contact_name"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Representative *</FormLabel>
+                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Name *</FormLabel>
                                                     <FormControl>
                                                         <Input {...field} placeholder="John Doe" className="bg-white/5 border-white/5 h-12" />
                                                     </FormControl>
@@ -401,9 +401,9 @@ export default function SellPage() {
                                             name="email"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Business Email *</FormLabel>
+                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Email *</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} type="email" placeholder="john@company.com" className="bg-white/5 border-white/5 h-12" />
+                                                        <Input {...field} type="email" placeholder="john@gmail.com" className="bg-white/5 border-white/5 h-12" />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -414,9 +414,9 @@ export default function SellPage() {
                                             name="phone"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Direct Line</FormLabel>
+                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Phone Number *</FormLabel>
                                                     <FormControl>
-                                                        <Input {...field} type="tel" placeholder="+1 (555) 000-0000" className="bg-white/5 border-white/5 h-12" />
+                                                        <Input {...field} type="tel" placeholder="+1 (555)-000-0000" className="bg-white/5 border-white/5 h-12" />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -445,6 +445,31 @@ export default function SellPage() {
                                         <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xs text-emerald-500">2</div>
                                         Hardware Protocol
                                     </h2>
+                                    <div className="mb-6 p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                                                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                                            </div>
+                                            <div>
+                                                <p className="text-emerald-400 text-xs font-bold">Bulk Inventory? Skip manual entry.</p>
+                                                <p className="text-slate-400 text-[10px]">Upload your spreadsheet in the final step instead.</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                form.setValue('category', 'other');
+                                                form.setValue('quantity', 1);
+                                                form.setValue('condition', 'grade_b');
+                                                form.setValue('comments', 'Bulk submission via spreadsheet manifest.');
+                                                setStep(3);
+                                            }}
+                                            className="text-[10px] uppercase tracking-widest font-black text-emerald-500 hover:text-emerald-500/80 transition-colors whitespace-nowrap"
+                                        >
+                                            Skip Now →
+                                        </button>
+                                    </div>
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                         <FormField
                                             control={form.control}
@@ -536,13 +561,13 @@ export default function SellPage() {
                                                         <FormItem>
                                                             <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">
                                                                 {selectedCategory === 'gpu' ? 'VRAM' :
-                                                                    selectedCategory === 'phone' ? 'Carrier' :
+                                                                    selectedCategory === 'phone' ? 'Locked or Unlocked?' :
                                                                         'RAM'}
                                                             </FormLabel>
                                                             <FormControl>
                                                                 <Input {...field}
                                                                     placeholder={selectedCategory === 'gpu' ? '24GB GDDR6X' :
-                                                                        selectedCategory === 'phone' ? 'Unlocked' :
+                                                                        selectedCategory === 'phone' ? 'e.g. Unlocked' :
                                                                             '32GB'}
                                                                     className="bg-white/5 border-white/5 h-12" />
                                                             </FormControl>
@@ -577,7 +602,7 @@ export default function SellPage() {
                                             name="condition"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Functionality State *</FormLabel>
+                                                    <FormLabel className="text-[10px] uppercase tracking-widest font-black text-neutral-500">Asset Condition *</FormLabel>
                                                     <Select onValueChange={field.onChange} value={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="bg-white/5 border-white/5 h-12">
@@ -637,7 +662,7 @@ export default function SellPage() {
 
                                     <div className="space-y-8">
                                         <div className="group relative">
-                                            <Label className="text-[10px] uppercase tracking-widest font-black text-neutral-500 mb-2 block">Spreadsheet Manifest (Preferred)</Label>
+                                            <Label className="text-[10px] uppercase tracking-widest font-black text-neutral-500 mb-2 block">Spreadsheet</Label>
                                             <SpreadsheetUploader onUpload={setSpreadsheetUrl} />
                                         </div>
 

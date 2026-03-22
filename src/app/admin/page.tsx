@@ -37,8 +37,8 @@ const steps = [
 
 function AdminGuideContent() {
     return (
-        <div className="min-h-screen pt-14">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 max-w-3xl">
+        <div className="min-h-screen pt-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-10 max-w-3xl">
                 <div className="mb-10">
                     <p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">Admin Portal</p>
                     <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">How It Works</h1>
