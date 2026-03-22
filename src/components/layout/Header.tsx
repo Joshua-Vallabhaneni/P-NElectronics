@@ -37,7 +37,7 @@ export function Header() {
                 'fixed top-0 z-50 w-full transition-colors',
                 isHome
                     ? 'bg-transparent'
-                    : 'border-b border-neutral-800 bg-slate-950/90 backdrop-blur-xl'
+                    : 'border-b border-neutral-800 bg-[#0e0e0e]/95 backdrop-blur-xl'
             )}
         >
             <nav className="container mx-auto px-4 sm:px-6 lg:px-8">

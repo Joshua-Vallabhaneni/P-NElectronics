@@ -29,7 +29,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
 
     if (requireAdmin && !isAdmin) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+            <div className="min-h-screen bg-[#0e0e0e] flex items-center justify-center p-4">
                 <div className="text-center max-w-md mx-auto p-8">
                     <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <ShieldAlert className="w-8 h-8 text-red-400" />

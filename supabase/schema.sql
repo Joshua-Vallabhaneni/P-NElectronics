@@ -205,6 +205,17 @@ CREATE POLICY "Admins can update quote requests"
     )
   );
 
+-- Only admins can delete quote requests
+CREATE POLICY "Admins can delete quote requests"
+  ON quote_requests FOR DELETE
+  USING (
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_profiles.id = auth.uid()
+      AND user_profiles.role = 'admin'
+    )
+  );
+
 -- Create index for faster queries
 CREATE INDEX IF NOT EXISTS idx_quote_requests_status ON quote_requests(status);
 CREATE INDEX IF NOT EXISTS idx_quote_requests_created ON quote_requests(created_at DESC);
@@ -255,6 +266,9 @@ CREATE TRIGGER update_quote_requests_updated_at
 -- ============================================
 -- Allow anonymous users to insert quote requests
 GRANT INSERT ON quote_requests TO anon;
+
+-- Allow authenticated users (admins) to manage quote requests
+GRANT ALL ON quote_requests TO authenticated;
 
 -- Allow anonymous users to read public data
 GRANT SELECT ON categories TO anon;

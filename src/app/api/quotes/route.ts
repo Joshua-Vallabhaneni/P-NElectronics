@@ -42,9 +42,8 @@ export async function POST(request: NextRequest) {
         processor: processor || null,
         ram: ram || null,
         storage_type: storage_type || null,
-        vram: vram || null,
         condition,
-        comments: comments || null,
+        admin_notes: comments || null, // Map user comments to admin_notes since 'comments' column missing
         spreadsheet_url: spreadsheet_url || null,
         image_urls: image_urls || null,
       })

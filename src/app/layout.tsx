@@ -3,6 +3,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthGuard } from '@/components/common/AuthGuard';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { BackgroundGlow } from '@/components/ui/background-glow';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <AuthGuard>
+            <BackgroundGlow />
             <Header />
             <main className="flex-1">
               {children}

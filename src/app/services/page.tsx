@@ -5,6 +5,7 @@ import {
     Shield,
     Recycle,
     Globe,
+    Check,
     CheckCircle,
     AlertTriangle,
     Database,
@@ -12,343 +13,237 @@ import {
     ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function ServicesPage() {
     return (
-        <div className="bg-slate-950 pt-14">
-            {/* Hero — left-aligned, editorial */}
-            <section className="mx-auto max-w-6xl px-6 pt-16 pb-14">
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="text-xs uppercase tracking-widest text-emerald-400 mb-4"
-                >
-                    Our Services
-                </motion.p>
-                <motion.h1
-                    initial={{ opacity: 0, y: 12 }}
+        <div className="min-h-screen pt-20 pb-4 selection:bg-emerald-500/30">
+            {/* ── Section 1: Hero ── */}
+            <section className="mx-auto max-w-[1200px] px-6 pt-24 pb-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight max-w-2xl"
+                    transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+                    className="max-w-3xl"
                 >
-                    Professional ITAD, built on three pillars
-                </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    className="mt-4 text-base text-neutral-400 max-w-xl leading-relaxed"
-                >
-                    Secure tech recycling is no longer just a &quot;cleanup&quot; task — it
-                    is a critical security and sustainability strategy.
-                </motion.p>
+                    <div className="inline-flex items-center gap-2 px-2 py-1 rounded-md bg-emerald-500/5 border border-emerald-500/10 mb-8">
+                        <Shield className="w-3 h-3 text-emerald-400" />
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-emerald-300/80 font-bold">Standard Infrastructure Protocol</span>
+                    </div>
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
+                        The Infrastructure of Trust.
+                    </h1>
+                    <p className="text-xl text-zinc-300 leading-relaxed font-normal max-w-lg">
+                        Beyond simple recycling — we build NIST-compliant systems for data destruction and hardware lifecycle management.
+                    </p>
+                </motion.div>
             </section>
 
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="h-px bg-neutral-800" />
-            </div>
-
-            {/* Why it matters */}
-            <section className="mx-auto max-w-6xl px-6 py-16">
-                <div className="md:flex md:gap-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4 }}
-                        className="md:w-1/3 mb-8 md:mb-0"
-                    >
-                        <div className="flex items-center gap-2 mb-3">
-                            <AlertTriangle className="h-4 w-4 text-red-400" />
-                            <p className="text-xs uppercase tracking-widest text-red-400">
-                                Hidden risks
+            {/* ── Section 2: Why ITAD (Minimalist) ── */}
+            <section className="mx-auto max-w-[1200px] px-6 py-16 border-t border-white/[0.03]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                    <div className="md:col-span-4">
+                        <h2 className="text-xs uppercase tracking-[0.3em] text-white/40 font-bold mb-4">Critical Vectors</h2>
+                        <h3 className="text-2xl font-bold text-white tracking-tight leading-tight">
+                            The cost of <br />non-compliance.
+                        </h3>
+                    </div>
+                    <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-8 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-emerald-500/20 transition-all duration-300 group">
+                            <div className="text-emerald-400 font-bold text-xs tracking-widest uppercase mb-4 opacity-50 group-hover:opacity-100 transition-opacity">NIST 800-88</div>
+                            <h4 className="text-xl font-bold text-white mb-4">
+                                Data Persistence Risk
+                            </h4>
+                            <p className="text-base text-zinc-400 leading-relaxed">
+                                Standard sanitization is insufficient. Bits of sensitive information remain recoverable even after formatting. NIST 800-88 compliance is the only barrier.
                             </p>
                         </div>
-                        <h2 className="text-xl font-bold text-white leading-snug">
-                            Why proper ITAD matters
-                        </h2>
-                        <p className="mt-3 text-sm text-neutral-400 leading-relaxed">
-                            Most organizations believe &quot;wiping&quot; a drive or sending
-                            it to a general recycler is sufficient. These methods often
-                            leave businesses vulnerable.
-                        </p>
-                    </motion.div>
+                        <div className="p-8 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-emerald-500/20 transition-all duration-300 group">
+                            <div className="text-emerald-400 font-bold text-xs tracking-widest uppercase mb-4 opacity-50 group-hover:opacity-100 transition-opacity">EPA LIABILITY</div>
+                            <h4 className="text-xl font-bold text-white mb-4">
+                                Environmental Liability
+                            </h4>
+                            <p className="text-base text-zinc-400 leading-relaxed">
+                                Improper disposal isn't just a PR risk — it's a legal one. Toxic heavy metals require specialized harvesting to mitigate multi-million dollar liabilities.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    <div className="md:w-2/3 space-y-0 divide-y divide-neutral-800/60">
-                        {[
-                            {
-                                icon: Database,
-                                title: "The Data Recovery Reality",
-                                text: "Standard formatting does not remove data — it merely hides it. Without NIST 800-88 compliant sanitization, sensitive information remains recoverable.",
-                                color: "text-red-400",
-                            },
-                            {
-                                icon: Trash2,
-                                title: "The E-Waste Crisis",
-                                text: "Electronic waste is the fastest-growing waste stream globally. Many devices contain lead, mercury, and cadmium. Improper disposal can lead to hefty EPA fines and brand damage.",
-                                color: "text-orange-400",
-                            },
-                        ].map((risk, i) => (
-                            <motion.div
-                                key={risk.title}
-                                initial={{ opacity: 0, y: 16 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-40px" }}
-                                transition={{ duration: 0.4, delay: i * 0.08 }}
-                                className="flex gap-4 py-6 first:pt-0"
-                            >
-                                <risk.icon
-                                    className={`h-5 w-5 ${risk.color} mt-0.5 shrink-0`}
-                                />
-                                <div>
-                                    <h3 className="text-sm font-semibold text-white mb-1">
-                                        {risk.title}
+            {/* ── Section 3: The Three Pillars (Main Blocks) ── */}
+            <section className="mx-auto max-w-[1200px] px-6 pt-24 pb-32 space-y-32">
+                {[
+                    {
+                        icon: Shield,
+                        n: "01",
+                        title: "Secure Data Destruction",
+                        sub: "NIST 800-88 COMPLIANT",
+                        description: "Full-spectrum data remediation from physical shredding to verified logical sanitization.",
+                        tags: ["GDPR", "HIPAA", "FACTA", "NIST"],
+                        features: [
+                            { title: "Mobile Shredding", description: "Secure on-site physical destruction of storage media and hardware." },
+                            { title: "Logical Sanitization", description: "NIST 800-88 compliant software-based data erasure protocols." },
+                            { title: "Audit Trail", description: "Complete chain-of-custody documentation for every retired asset." },
+                            { title: "Certifications", description: "Official certificates of destruction for your compliance records." }
+                        ],
+                        accent: "emerald-500"
+                    },
+                    {
+                        icon: Recycle,
+                        n: "02",
+                        title: "Circular Recycling",
+                        sub: "ZERO-LANDFILL PROTOCOL",
+                        description: "Recovering raw materials for reuse in the industrial supply chain, mitigating environmental impact.",
+                        tags: ["EPA", "R2V3", "RIOS"],
+                        features: [
+                            { title: "Metal Harvesting", description: "Industrial-scale recovery of gold, silver, and rare earth metals." },
+                            { title: "Material Sorting", description: "Precision separation of high-grade plastics and glass components." },
+                            { title: "EPA Compliance", description: "Fully verified downstream processing of hazardous materials." },
+                            { title: "ESG Reporting", description: "Detailed metrics on diverted waste and carbon footprint reduction." }
+                        ],
+                        accent: "emerald-500"
+                    },
+                    {
+                        icon: Globe,
+                        n: "03",
+                        title: "Global Resale",
+                        sub: "LIFECYCLE EXTENSION",
+                        description: "Extending the utility of decommissioned hardware through professional grading and secondary market resale.",
+                        tags: ["ESG", "CIRCULAR", "REFURB"],
+                        features: [
+                            { title: "System Testing", description: "Multi-point diagnostic verification of all resale-ready hardware." },
+                            { title: "Logistics Network", description: "Secure global distribution to verified secondary market buyers." },
+                            { title: "Certified Refurb", description: "Professional restoration to original manufacturer specifications." },
+                            { title: "Value Recovery", description: "Maximum ROI through strategic market placement of assets." }
+                        ],
+                        accent: "emerald-500"
+                    }
+                ].map((pillar, i) => (
+                    <div key={pillar.title} className="relative group">
+                        <div className="flex flex-col md:flex-row gap-20">
+                            {/* Left side: Context */}
+                            <div className="md:w-1/2">
+                                <div className="sticky top-32">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="font-mono text-sm text-white/20">{pillar.n}</span>
+                                        <div className="h-px w-8 bg-white/10" />
+                                        <span className="font-mono text-[10px] tracking-[0.3em] text-emerald-400/70 font-bold uppercase">{pillar.sub}</span>
+                                    </div>
+                                    <h3 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-6 leading-tight">
+                                        {pillar.title}
                                     </h3>
-                                    <p className="text-sm text-neutral-400 leading-relaxed">
-                                        {risk.text}
+                                    <p className="text-lg text-zinc-300 leading-relaxed mb-8 max-w-md">
+                                        {pillar.description}
+                                    </p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {pillar.tags.map(tag => (
+                                            <span key={tag} className="font-mono text-[9px] px-2.5 py-1 rounded bg-white/[0.03] border border-white/[0.06] text-white/40 tracking-widest uppercase">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="md:w-1/2 grid grid-cols-1 gap-4">
+                                {pillar.features.map((feature, j) => (
+                                    <motion.div
+                                        key={feature.title}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.4, delay: j * 0.1 }}
+                                        className="p-6 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:border-emerald-500/20 hover:bg-white/[0.04] transition-all duration-300 group/card relative overflow-hidden"
+                                    >
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500/0 group-hover/card:bg-emerald-500/50 transition-all duration-300" />
+                                        <div className="relative z-10">
+                                            <h4 className="text-white font-bold mb-1 group-hover:text-emerald-400 transition-colors uppercase tracking-wider text-sm">{feature.title}</h4>
+                                            <p className="text-sm text-zinc-500 leading-relaxed group-hover/card:text-zinc-400 transition-colors">
+                                                {feature.description}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </section>
+
+            {/* ── Section 4: How it works (Documentation Style) ── */}
+            <section className="mx-auto max-w-[1200px] px-6 pt-24 pb-8 border-t border-white/[0.03]">
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                    <div>
+                        <h2 className="text-xs uppercase tracking-[0.3em] text-white/40 font-bold mb-4">Operations</h2>
+                        <h3 className="text-3xl font-bold text-white tracking-tight leading-tight">
+                            Protocol execution.
+                        </h3>
+                    </div>
+                </div>
+
+                <div className="relative mt-20">
+                    {/* Connecting Line (Desktop Only) */}
+                    <div className="absolute top-[18px] left-0 right-0 h-[1px] bg-emerald-500/10 hidden md:block" />
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+                        {[
+                            { n: "01", title: "Assessment", text: "Physical and technical audit of whole inventory sets." },
+                            { n: "02", title: "Logistics", text: "Secure chain-of-custody pickup with sealed transport." },
+                            { n: "03", title: "Remediation", text: "Destruction, recycling, or software-level wipes." },
+                            { n: "04", title: "Certification", text: "Full ESG reporting and data destruction logs." }
+                        ].map((step, i) => (
+                            <div key={step.n} className="flex flex-col gap-8 group relative">
+                                {/* Large Watermark Number */}
+                                <div className="absolute -top-12 -left-4 text-7xl font-bold text-white/[0.03] select-none group-hover:text-white/[0.05] transition-colors pointer-events-none">
+                                    {step.n}
+                                </div>
+
+                                <div className="flex items-center gap-4 relative z-10">
+                                    <div className="w-9 h-9 rounded-full bg-[#0e0e0e] border border-emerald-500/30 flex items-center justify-center group-hover:border-emerald-500 transition-colors shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                    </div>
+                                    <div className="md:hidden h-px flex-1 bg-emerald-500/10" />
+                                </div>
+
+                                <div className="relative z-10">
+                                    <h4 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">{step.title}</h4>
+                                    <p className="text-base text-zinc-400 leading-relaxed font-normal">
+                                        {step.text}
                                     </p>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="h-px bg-neutral-800" />
-            </div>
+            {/* ── Section 5: CTA ── */}
+            <section className="mx-auto max-w-[1200px] px-6 pt-8 pb-4">
+                <div className="p-16 rounded-3xl bg-emerald-500/[0.02] border border-white/[0.05] relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-500">
+                    {/* Dot Grid Background */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                        style={{ backgroundImage: 'radial-gradient(circle, #10b981 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
-            {/* Three Pillars — deep dive */}
-            <section className="mx-auto max-w-6xl px-6 py-16">
-                <motion.h2
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4 }}
-                    className="text-2xl font-bold text-white mb-12"
-                >
-                    Complete ITAD Services
-                </motion.h2>
+                    {/* Radial Glow */}
+                    <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
 
-                <div className="space-y-16">
-                    {[
-                        {
-                            icon: Shield,
-                            num: "01",
-                            title: "Secure Data Destruction",
-                            color: "text-blue-400",
-                            description:
-                                "We don't just delete files; we eliminate them. Using NIST 800-88 standards, we provide on-site and off-site shredding and software-based wiping, backed by a formal Certificate of Destruction.",
-                            features: [
-                                {
-                                    title: "NIST 800-88 Wiping",
-                                    text: "Logical techniques used to sanitize data for devices intended for reuse.",
-                                },
-                                {
-                                    title: "Physical Shredding",
-                                    text: "On-site or off-site shredding that reduces media to unreadable fragments.",
-                                },
-                                {
-                                    title: "Chain of Custody",
-                                    text: "Every asset tracked via serial number from pickup to final destruction.",
-                                },
-                                {
-                                    title: "Certificate of Destruction",
-                                    text: "Complete documentation proving your data has been securely destroyed.",
-                                },
-                            ],
-                            compliance: ["GDPR", "HIPAA", "FACTA"],
-                        },
-                        {
-                            icon: Recycle,
-                            num: "02",
-                            title: "Circular Recycling & Scrap Recovery",
-                            color: "text-emerald-400",
-                            description:
-                                'For equipment no longer functional, we prevent landfill contributions through a "zero-waste" policy, recovering valuable materials and reducing environmental impact.',
-                            features: [
-                                {
-                                    title: "Material Harvesting",
-                                    text: "We dismantle units to recover precious metals (gold, copper, silver) and plastics.",
-                                },
-                                {
-                                    title: "Industrial Reuse",
-                                    text: "Materials returned to the manufacturing supply chain, reducing virgin mining.",
-                                },
-                                {
-                                    title: "Zero-Landfill Policy",
-                                    text: "Every component is either reused, recycled, or responsibly processed.",
-                                },
-                                {
-                                    title: "Lower Carbon Footprint",
-                                    text: "Reduces the need for virgin mining and lowers the carbon footprint of new technology.",
-                                },
-                            ],
-                            compliance: ["EPA", "Zero-Landfill"],
-                        },
-                        {
-                            icon: Globe,
-                            num: "03",
-                            title: "Global Resale & Social Impact",
-                            color: "text-purple-400",
-                            description:
-                                "We believe yesterday's office tech can be tomorrow's classroom tool. By refurbishing and exporting units to developing regions, we help bridge the digital divide.",
-                            features: [
-                                {
-                                    title: "Refurbishment",
-                                    text: '"Good lots" are cleaned, repaired, and updated with diagnostic checks.',
-                                },
-                                {
-                                    title: "Bridging the Digital Divide",
-                                    text: "Refurbished units sold to developing regions to support schools and communities.",
-                                },
-                                {
-                                    title: "ESG Metrics",
-                                    text: "Tangible Social Responsibility metrics for sustainability reporting.",
-                                },
-                                {
-                                    title: "Carbon Offset Data",
-                                    text: "Track the environmental impact of choosing refurbishment over new manufacturing.",
-                                },
-                            ],
-                            compliance: ["ESG Reporting", "Social Impact"],
-                        },
-                    ].map((service, i) => (
-                        <motion.div
-                            key={service.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-60px" }}
-                            transition={{ duration: 0.4 }}
-                            className="md:flex md:gap-12"
-                        >
-                            {/* Left — title area */}
-                            <div className="md:w-1/3 mb-6 md:mb-0">
-                                <span className="text-xs font-mono text-neutral-600">
-                                    {service.num}
-                                </span>
-                                <div className="flex items-center gap-2.5 mt-2 mb-3">
-                                    <service.icon className={`h-5 w-5 ${service.color}`} />
-                                    <h3 className="text-lg font-semibold text-white">
-                                        {service.title}
-                                    </h3>
-                                </div>
-                                <p className="text-sm text-neutral-400 leading-relaxed">
-                                    {service.description}
-                                </p>
-                                <div className="flex flex-wrap gap-1.5 mt-4">
-                                    {service.compliance.map((c) => (
-                                        <span
-                                            key={c}
-                                            className="text-xs text-neutral-500 border border-neutral-800 rounded px-2 py-0.5"
-                                        >
-                                            {c}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Right — features list */}
-                            <div className="md:w-2/3 space-y-0 divide-y divide-neutral-800/40">
-                                {service.features.map((f, j) => (
-                                    <div key={f.title} className="flex gap-3 py-4 first:pt-0">
-                                        <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500/70" />
-                                        <div>
-                                            <span className="text-sm font-medium text-white">
-                                                {f.title}
-                                            </span>
-                                            <p className="text-xs text-neutral-500 leading-relaxed mt-0.5">
-                                                {f.text}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </section>
-
-            <div className="mx-auto max-w-6xl px-6">
-                <div className="h-px bg-neutral-800" />
-            </div>
-
-            {/* Process */}
-            <section className="mx-auto max-w-6xl px-6 py-16">
-                <motion.h2
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4 }}
-                    className="text-2xl font-bold text-white mb-10"
-                >
-                    How it works
-                </motion.h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
-                    {[
-                        {
-                            n: "01",
-                            title: "Contact",
-                            text: "Reach out for a free asset audit and quote.",
-                        },
-                        {
-                            n: "02",
-                            title: "Pickup",
-                            text: "We collect your equipment with secure chain of custody.",
-                        },
-                        {
-                            n: "03",
-                            title: "Process",
-                            text: "Data destruction, recycling, or refurbishment — your choice.",
-                        },
-                        {
-                            n: "04",
-                            title: "Report",
-                            text: "Receive certificates, serial number logs, and ESG impact data.",
-                        },
-                    ].map((step, i) => (
-                        <motion.div
-                            key={step.n}
-                            initial={{ opacity: 0, y: 12 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.3, delay: i * 0.06 }}
-                        >
-                            <span className="text-2xl font-bold text-emerald-500/30">
-                                {step.n}
-                            </span>
-                            <h3 className="mt-1 text-sm font-semibold text-white">
-                                {step.title}
+                    <div className="absolute top-0 right-0 p-12 text-white/[0.03] font-bold text-9xl select-none group-hover:text-white/[0.05] transition-all duration-700 pointer-events-none">
+                        ITAD
+                    </div>
+                    <div className="relative z-10 lg:flex items-center justify-between gap-12">
+                        <div className="max-w-md">
+                            <h3 className="text-4xl font-bold text-white tracking-tight mb-6">
+                                Ready for deployment?
                             </h3>
-                            <p className="mt-1 text-xs text-neutral-500 leading-relaxed">
-                                {step.text}
-                            </p>
-                        </motion.div>
-                    ))}
-                </div>
-            </section>
-
-            {/* CTA */}
-            <section className="border-t border-neutral-800">
-                <div className="mx-auto max-w-6xl px-6 py-16">
-                    <div className="md:flex md:items-end md:justify-between">
-                        <div className="max-w-lg mb-6 md:mb-0">
-                            <h2 className="text-2xl font-bold text-white leading-snug">
-                                Ready to get started?
-                            </h2>
-                            <p className="mt-2 text-sm text-neutral-400 leading-relaxed">
-                                Get a free asset evaluation and see how much your old
-                                equipment is worth.
+                            <p className="text-lg text-zinc-300 leading-relaxed mb-10">
+                                Connect with our logistics team to schedule your first inventory assessment. NIST-compliant, enterprise-ready.
                             </p>
                         </div>
-                        <Link
-                            href="/sell"
-                            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
-                        >
-                            Get a Free Quote
-                            <ArrowRight className="h-4 w-4" />
+                        <Link href="/sell">
+                            <Button className="h-14 rounded-xl bg-white text-black hover:bg-emerald-50 px-12 text-sm font-bold uppercase tracking-widest transition-all hover:scale-[1.05] active:scale-[0.95] shadow-xl">
+                                Sell To Us
+                            </Button>
                         </Link>
                     </div>
                 </div>

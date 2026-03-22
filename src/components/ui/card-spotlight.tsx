@@ -61,8 +61,8 @@ export const CardSpotlight = ({
                         animationSpeed={5}
                         containerClassName="bg-transparent absolute inset-0 pointer-events-none"
                         colors={[
-                            [59, 130, 246],
-                            [139, 92, 246],
+                            [16, 185, 129],
+                            [45, 212, 191],
                         ]}
                         dotSize={3}
                     />

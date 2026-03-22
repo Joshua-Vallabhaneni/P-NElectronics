@@ -29,10 +29,10 @@ import type { Product, ConditionGrade } from '@/types/database';
 import { toast } from 'sonner';
 
 const conditionLabels: Record<ConditionGrade, { label: string; color: string }> = {
-    A: { label: 'Grade A', color: 'bg-emerald-500/20 text-emerald-400' },
-    B: { label: 'Grade B', color: 'bg-blue-500/20 text-blue-400' },
-    refurbished: { label: 'Refurb', color: 'bg-purple-500/20 text-purple-400' },
-    parts: { label: 'Parts', color: 'bg-orange-500/20 text-orange-400' },
+    A: { label: 'Grade A', color: 'bg-[#00C48C] text-[#0e0e0e] border-[#00C48C]' },
+    B: { label: 'Grade B', color: 'bg-[#2A7A5E] text-white border-transparent' },
+    refurbished: { label: 'Refurb', color: 'bg-transparent border-[#00C48C] text-[#00C48C]' },
+    parts: { label: 'Parts', color: 'bg-transparent border-[#3A4A42] text-[#6A7A72]' },
 };
 
 function ProductsContent() {
@@ -109,7 +109,7 @@ function ProductsContent() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900">
+        <div className="min-h-screen">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
@@ -192,7 +192,7 @@ function ProductsContent() {
                                                     {product.category?.name || '—'}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant="outline" className={`${condition.color} border-0`}>
+                                                    <Badge variant="outline" className={`${condition.color} border py-0.5`}>
                                                         {condition.label}
                                                     </Badge>
                                                 </TableCell>
@@ -252,7 +252,7 @@ function ProductsContent() {
 
                 {/* Delete Dialog */}
                 <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, product: null })}>
-                    <DialogContent className="bg-slate-800 border-white/10">
+                    <DialogContent className="border-white/10">
                         <DialogHeader>
                             <DialogTitle className="text-white">Delete Product</DialogTitle>
                             <DialogDescription className="text-slate-400">

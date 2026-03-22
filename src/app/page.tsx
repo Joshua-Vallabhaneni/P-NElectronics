@@ -19,35 +19,44 @@ export default function HomePage() {
       router.replace("/admin");
     }
   }, [loading, user, isAdmin, router]);
+
+  useEffect(() => {
+    document.documentElement.classList.add("snap-y", "snap-mandatory", "scroll-smooth");
+    return () => {
+      document.documentElement.classList.remove("snap-y", "snap-mandatory", "scroll-smooth");
+    };
+  }, []);
   return (
     <div>
-      {/* ── Hero — 75vh, not full-screen ── */}
-      <section className="min-h-[75vh] w-full flex items-center justify-center relative pt-[clamp(6rem,10vh,8rem)] pb-[clamp(4rem,8vh,6rem)]">
-        <GradientWave
-          colors={["#031f19", "#064e3b", "#0d9488", "#065f46", "#052e20"]}
-          shadowPower={5}
-          darkenTop={true}
-          noiseFrequency={[0.00012, 0.00018]}
-          deform={{ incline: 0.15, noiseAmp: 80, noiseFlow: 1.5 }}
-        />
+      {/* ── Section 1: Hero ── */}
+      <section className="h-screen w-full flex items-center justify-center relative snap-start shrink-0 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <GradientWave
+            colors={["#031f19", "#064e3b", "#0d9488", "#065f46", "#052e20"]}
+            shadowPower={5}
+            darkenTop={true}
+            noiseFrequency={[0.00012, 0.00018]}
+            deform={{ incline: 0.15, noiseAmp: 80, noiseFlow: 1.5 }}
+          />
+        </div>
 
-        <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-3xl">
+        <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl">
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="font-extrabold text-4xl md:text-6xl lg:text-7xl text-white leading-[1.05] tracking-tight"
+            className="font-extrabold text-5xl md:text-7xl lg:text-8xl text-white leading-[0.95] tracking-tighter"
           >
             Your Data Secured.
             <br />
-            Your E-Waste Erased.
+            <span className="text-emerald-400">Your E-Waste Erased.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.45 }}
-            className="mt-5 text-white/70 max-w-md text-sm md:text-base leading-relaxed"
+            className="mt-8 text-white/70 max-w-lg text-base md:text-lg leading-relaxed font-medium"
           >
             From NIST-compliant data destruction to global tech refurbishment
             — we turn old hardware into a force for good.
@@ -57,12 +66,12 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
-            className="flex items-center gap-3 mt-8 flex-wrap justify-center"
+            className="flex items-center gap-4 mt-10 flex-wrap justify-center"
           >
             <Link href="/services">
               <Button
                 variant="secondary"
-                className="h-11 rounded-full cursor-pointer px-8 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20 font-medium text-sm"
+                className="h-12 rounded-full cursor-pointer px-10 bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border border-white/20 font-bold text-sm uppercase tracking-widest transition-all hover:scale-105"
               >
                 Our Services
               </Button>
@@ -70,7 +79,7 @@ export default function HomePage() {
             <Link href="/inventory">
               <Button
                 variant="secondary"
-                className="h-11 rounded-full cursor-pointer px-8 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20 font-medium text-sm"
+                className="h-12 rounded-full cursor-pointer px-10 bg-white/10 text-white hover:bg-white/20 backdrop-blur-md border border-white/20 font-bold text-sm uppercase tracking-widest transition-all hover:scale-105"
               >
                 Browse Inventory
               </Button>
@@ -78,7 +87,7 @@ export default function HomePage() {
             <Link href="/sell">
               <Button
                 variant="secondary"
-                className="h-11 rounded-full cursor-pointer px-8 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm border border-white/20 font-medium text-sm"
+                className="h-12 rounded-full cursor-pointer px-10 bg-emerald-500 text-black hover:bg-emerald-400 font-bold text-sm uppercase tracking-widest transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
               >
                 Get a Quote
               </Button>
@@ -86,105 +95,82 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* Trust signals — anchored to bottom of hero */}
+        {/* Scroll Indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.9 }}
-          className="absolute bottom-0 left-0 right-0 z-10 border-t border-white/10"
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <div className="mx-auto max-w-5xl px-6 grid grid-cols-4 py-3">
-            {[
-              "NIST 800-88 Certified",
-              "Zero Landfill",
-              "100% Audit Trail",
-              "24–48hr Quotes",
-            ].map((item) => (
-              <p key={item} className="text-[11px] text-white font-medium tracking-wide text-center">
-                {item}
-              </p>
-            ))}
-          </div>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Scroll to Explore</span>
+          <div className="w-[1px] h-12 bg-gradient-to-t from-emerald-500/50 to-transparent" />
         </motion.div>
       </section>
 
-      {/* ── Services — leaner cards ── */}
-      <section className="bg-slate-950">
-        <div className="mx-auto max-w-6xl px-6 py-24">
+      {/* ── Section 2: Three Pillars ── */}
+      <section className="h-screen w-full snap-start shrink-0 flex items-center justify-center relative overflow-hidden">
+        <div className="mx-auto max-w-6xl px-6 w-full relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4 }}
-            className="text-center mb-12"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <p className="text-emerald-400 text-xs font-medium tracking-widest uppercase mb-2">
-              What We Do
+            <p className="inline-block px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-[10px] font-black tracking-[0.4em] uppercase mb-4">
+              Infrastructure Protocol
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-              Three pillars of responsible IT disposal
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
+              Strategic Asset Lifecycle Management
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
             {[
               {
                 icon: Shield,
                 title: "Secure Data Destruction",
-                bullets: [
-                  "NIST 800-88 certified wiping",
-                  "Physical shredding available",
-                  "Full chain-of-custody tracking",
-                  "Certificates of destruction",
-                ],
+                description: "NIST 800-88 compliant sanitization and physical shredding with full chain-of-custody tracking.",
                 iconColor: "text-blue-400",
-                dotColors: [[59, 130, 246], [96, 165, 250]] as number[][],
+                className: "md:col-span-2",
               },
               {
                 icon: Recycle,
                 title: "Circular Recycling",
-                bullets: [
-                  "Zero-landfill commitment",
-                  "Precious metals recovery",
-                  "Plastics processing & reuse",
-                  "EPA-compliant disposal",
-                ],
+                description: "Zero-landfill commitment with precious metal harvesting and EPA-compliant processing.",
                 iconColor: "text-emerald-400",
-                dotColors: [[16, 185, 129], [52, 211, 153]] as number[][],
+                className: "md:row-span-2",
               },
               {
                 icon: Globe,
                 title: "Global Refurbishment",
-                bullets: [
-                  "Equipment testing & grading",
-                  "Export to developing markets",
-                  "Bridging the digital divide",
-                  "Extend hardware lifecycle",
-                ],
+                description: "Extending hardware lifecycles through professional grading and resale to emerging markets.",
                 iconColor: "text-purple-400",
-                dotColors: [[139, 92, 246], [167, 139, 250]] as number[][],
+                className: "md:col-span-2",
               },
             ].map((item, i) => (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
+                className={item.className}
               >
-                <CardSpotlight className="h-full rounded-xl bg-neutral-950 border-neutral-800/60">
-                  <item.icon className={`w-6 h-6 ${item.iconColor} relative z-20 mb-4`} />
-                  <h3 className="text-lg font-bold text-white relative z-20 mb-4">
-                    {item.title}
-                  </h3>
-                  <ul className="space-y-2 relative z-20">
-                    {item.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-2">
-                        <Check className={`w-4 h-4 ${item.iconColor} mt-0.5 shrink-0`} />
-                        <span className="text-sm text-neutral-300">{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <CardSpotlight className="h-full rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-md p-10 flex flex-col group hover:bg-white/[0.04] transition-all duration-500">
+                  <div className="relative z-20 flex flex-col h-full">
+                    <div className={`p-4 rounded-2xl bg-white/5 w-fit mb-8 border border-white/10 ${item.iconColor} group-hover:scale-110 transition-transform duration-500`}>
+                      <item.icon className="w-8 h-8" />
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-white mb-4 tracking-tight group-hover:text-emerald-400 transition-colors">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-sm md:text-base text-neutral-400 mb-8 leading-relaxed max-w-md flex-1">
+                      {item.description}
+                    </p>
+                  </div>
                 </CardSpotlight>
               </motion.div>
             ))}
@@ -192,6 +178,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Footer Snap Section ── */}
+      <section className="snap-start shrink-0">
+        <div className="h-0" /> {/* Transparent anchor for snap */}
+      </section>
     </div>
   );
 }

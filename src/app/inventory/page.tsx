@@ -14,10 +14,10 @@ import type { Product, Category, ConditionGrade } from '@/types/database';
 import { Loader } from '@/components/common/Loader';
 
 const conditionLabels: Record<ConditionGrade, { label: string; color: string }> = {
-    A: { label: 'Grade A - Like New', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
-    B: { label: 'Grade B - Good', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-    refurbished: { label: 'Refurbished', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-    parts: { label: 'Parts Only', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' },
+    A: { label: 'Grade A - Like New', color: 'bg-[#00C48C] text-[#0e0e0e] border-[#00C48C]' },
+    B: { label: 'Grade B - Good', color: 'bg-[#2A7A5E] text-white border-transparent' },
+    refurbished: { label: 'Refurbished', color: 'bg-transparent border-[#00C48C] text-[#00C48C]' },
+    parts: { label: 'Parts Only', color: 'bg-transparent border-[#3A4A42] text-[#6A7A72]' },
 };
 
 const categoryIcons: Record<string, any> = {
@@ -30,24 +30,23 @@ const categoryIcons: Record<string, any> = {
 
 function GradingLegend() {
     return (
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 mb-8">
-            <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mb-8 py-4 border-y border-white/[0.03]">
+            <div className="flex items-center gap-2 pr-8 border-r border-white/5 hidden md:flex">
                 <Package className="w-4 h-4 text-emerald-400" />
-                Condition Grading Guide
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {Object.entries(conditionLabels).map(([key, { label, color }]) => (
-                    <div key={key} className="flex items-center gap-2">
-                        <Badge variant="outline" className={`${color} border`}>
+                <span className="text-xs font-bold text-white uppercase tracking-widest">Protocol</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+                {Object.entries(conditionLabels).map(([key, { color }]) => (
+                    <div key={key} className="flex items-center gap-3">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${color}`}>
                             {key === 'parts' ? 'Parts' : key === 'refurbished' ? 'Refurb' : `Grade ${key}`}
-                        </Badge>
-                        <span className="text-neutral-400 text-sm">{label.split(' - ')[1] || label}</span>
+                        </span>
+                        <span className="text-xs text-zinc-500 font-medium whitespace-nowrap">
+                            {key === 'A' ? 'Verified Renewal' : key === 'B' ? 'Minor Wear' : key === 'refurbished' ? 'Certified Restoration' : 'Component-Sourced'}
+                        </span>
                     </div>
                 ))}
             </div>
-            <p className="text-neutral-500 text-xs mt-3">
-                Every item has undergone a 20-point diagnostic check and NIST 800-88 data sanitization.
-            </p>
         </div>
     );
 }
@@ -57,79 +56,81 @@ function ProductCard({ product }: { product: Product }) {
     const CategoryIcon = categoryIcons[product.category?.slug || 'laptop'] || Package;
 
     return (
-        <Link href={`/inventory/${product.id}`}>
-            <Card className="bg-neutral-900/50 border-neutral-800 hover:bg-neutral-900 hover:border-emerald-500/30 transition-all duration-300 group h-full cursor-pointer">
-                <CardContent className="p-0">
-                    {/* Image */}
-                    <div className="aspect-video bg-slate-800 relative overflow-hidden rounded-t-lg">
-                        {product.images && product.images[0] ? (
-                            <img
-                                src={product.images[0]}
-                                alt={product.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                                <CategoryIcon className="w-16 h-16 text-slate-600" />
-                            </div>
-                        )}
-                        {/* Badges */}
-                        <div className="absolute top-3 left-3 flex gap-2">
-                            <Badge variant="outline" className={`${condition.color} border backdrop-blur-sm`}>
-                                {product.condition === 'parts' ? 'Parts' : product.condition === 'refurbished' ? 'Refurb' : `Grade ${product.condition}`}
-                            </Badge>
-                            {product.is_bulk_lot && (
-                                <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 backdrop-blur-sm">
-                                    Bulk Lot
-                                </Badge>
-                            )}
+        <Link href={`/inventory/${product.id}`} className="group block h-full">
+            <div className="h-full rounded-2xl bg-white/[0.01] border border-white/[0.05] hover:border-emerald-500/20 hover:bg-white/[0.02] transition-all duration-500 overflow-hidden flex flex-col relative group">
+                {/* Visual Header */}
+                <div className="aspect-[16/10] bg-zinc-900 relative overflow-hidden">
+                    {product.images && product.images[0] ? (
+                        <img
+                            src={product.images[0]}
+                            alt={product.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-60 group-hover:opacity-100"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                            <CategoryIcon className="w-12 h-12 text-white/5 opacity-50 group-hover:scale-110 transition-transform duration-700" />
                         </div>
+                    )}
+
+                    {/* Floating Badge */}
+                    <div className="absolute top-4 left-4 z-20">
+                        <span className={`px-2.5 py-1 rounded text-[9px] font-bold uppercase tracking-widest backdrop-blur-md border ${condition.color}`}>
+                            {product.condition === 'parts' ? 'Parts' : product.condition === 'refurbished' ? 'Refurb' : `Grade ${product.condition}`}
+                        </span>
                     </div>
 
-                    {/* Content */}
-                    <div className="p-4">
-                        <h3 className="text-white font-semibold mb-1 group-hover:text-emerald-400 transition-colors line-clamp-1">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                </div>
+
+                {/* Content */}
+                <div className="p-5 flex flex-col flex-1">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-2 tracking-tight leading-tight">
                             {product.title}
                         </h3>
-                        <p className="text-slate-400 text-sm mb-3 line-clamp-2">
-                            {product.brand} {product.model}
-                        </p>
-
-                        {/* Specs */}
-                        <div className="flex flex-wrap gap-2 mb-4">
+                        {/* Specs Inline */}
+                        <div className="flex flex-wrap gap-2">
                             {product.processor && (
-                                <span className="text-xs px-2 py-1 bg-white/5 rounded text-slate-300">
+                                <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
                                     {product.processor}
                                 </span>
                             )}
                             {product.ram && (
-                                <span className="text-xs px-2 py-1 bg-white/5 rounded text-slate-300">
-                                    {product.ram}
-                                </span>
+                                <>
+                                    <span className="text-[10px] text-zinc-700">•</span>
+                                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+                                        {product.ram}
+                                    </span>
+                                </>
                             )}
                             {product.storage && (
-                                <span className="text-xs px-2 py-1 bg-white/5 rounded text-slate-300">
-                                    {product.storage}
-                                </span>
+                                <>
+                                    <span className="text-[10px] text-zinc-700">•</span>
+                                    <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+                                        {product.storage}
+                                    </span>
+                                </>
                             )}
                         </div>
+                    </div>
 
-                        {/* Price and Quantity */}
-                        <div className="flex items-center justify-between">
-                            <div>
-                                {product.price ? (
-                                    <span className="text-xl font-bold text-emerald-400">${product.price.toFixed(2)}</span>
-                                ) : (
-                                    <span className="text-slate-500">Contact for price</span>
-                                )}
-                            </div>
-                            <span className="text-slate-400 text-sm">
-                                Qty: {product.quantity}
-                            </span>
+                    {/* Footer Row */}
+                    <div className="mt-auto pt-4 border-t border-white/[0.05] flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-[0.2em] mb-1">Asset Value</span>
+                            {product.price ? (
+                                <span className="text-lg font-bold text-white tracking-tight">${product.price.toLocaleString()}</span>
+                            ) : (
+                                <span className="text-xs font-bold text-zinc-400 uppercase tracking-tighter">Quote Eq.</span>
+                            )}
+                        </div>
+                        <div className="text-right flex flex-col items-end">
+                            <span className="text-[9px] text-zinc-600 uppercase font-bold tracking-[0.2em] mb-1">In Stock</span>
+                            <span className="text-sm font-bold text-white">{product.quantity} <span className="text-zinc-500 text-[10px] font-medium uppercase ml-1">Units</span></span>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </Link>
     );
 }
@@ -158,15 +159,15 @@ function FilterSidebar({
 
             {/* Category Filter */}
             <div>
-                <label className="text-sm font-medium text-slate-300 mb-2 block">Category</label>
+                <label className="text-[10px] font-bold text-zinc-500 mb-3 block uppercase tracking-widest">Category</label>
                 <Select
                     value={filters.category || 'all'}
                     onValueChange={(value) => setFilters({ ...filters, category: value === 'all' ? '' : value })}
                 >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="h-10 bg-white/[0.02] border-white/10 text-zinc-300 hover:border-emerald-500/30 hover:text-white transition-all">
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-zinc-950 border-zinc-900 text-zinc-300">
                         <SelectItem value="all">All Categories</SelectItem>
                         {categories.map((cat) => (
                             <SelectItem key={cat.id} value={cat.id}>
@@ -179,15 +180,15 @@ function FilterSidebar({
 
             {/* Condition Filter */}
             <div>
-                <label className="text-sm font-medium text-slate-300 mb-2 block">Condition</label>
+                <label className="text-[10px] font-bold text-zinc-500 mb-3 block uppercase tracking-widest">Condition</label>
                 <Select
                     value={filters.condition || 'all'}
                     onValueChange={(value) => setFilters({ ...filters, condition: value === 'all' ? '' : value })}
                 >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="h-10 bg-white/[0.02] border-white/10 text-zinc-300 hover:border-emerald-500/30 hover:text-white transition-all">
                         <SelectValue placeholder="All Conditions" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-zinc-950 border-zinc-900 text-zinc-300">
                         <SelectItem value="all">All Conditions</SelectItem>
                         <SelectItem value="A">Grade A - Like New</SelectItem>
                         <SelectItem value="B">Grade B - Good</SelectItem>
@@ -199,15 +200,15 @@ function FilterSidebar({
 
             {/* Type Filter */}
             <div>
-                <label className="text-sm font-medium text-slate-300 mb-2 block">Listing Type</label>
+                <label className="text-[10px] font-bold text-zinc-500 mb-3 block uppercase tracking-widest">Listing Type</label>
                 <Select
                     value={filters.type || 'all'}
                     onValueChange={(value) => setFilters({ ...filters, type: value === 'all' ? '' : value })}
                 >
-                    <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                    <SelectTrigger className="h-10 bg-white/[0.02] border-white/10 text-zinc-300 hover:border-emerald-500/30 hover:text-white transition-all">
                         <SelectValue placeholder="All Types" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-zinc-950 border-zinc-900 text-zinc-300">
                         <SelectItem value="all">All Types</SelectItem>
                         <SelectItem value="individual">Individual Items</SelectItem>
                         <SelectItem value="bulk">Bulk Lots</SelectItem>
@@ -217,11 +218,11 @@ function FilterSidebar({
 
             {/* Clear Filters */}
             <Button
-                variant="outline"
-                className="w-full border-white/20 text-white hover:bg-white/10"
+                variant="ghost"
+                className="w-full text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all text-xs font-bold uppercase tracking-widest mt-4"
                 onClick={() => setFilters({ category: '', condition: '', type: '', search: '' })}
             >
-                Clear All Filters
+                Clear Filters
             </Button>
         </div>
     );
@@ -291,18 +292,18 @@ export default function InventoryPage() {
     }, [filters]);
 
     return (
-        <div className="bg-slate-950 pt-14">
+        <div className="min-h-screen flex flex-col pt-14 text-white">
             {/* Hero */}
-            <section className="pt-12 pb-8">
+            <section className="pt-8 pb-0">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="mb-8">
-                        <p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">
-                            Inventory
+                    <div className="mb-2">
+                        <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-emerald-400/60 mb-3">
+                            Inventory Portal
                         </p>
-                        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3 tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight">
                             Browse Our Inventory
                         </h1>
-                        <p className="text-base text-neutral-400 max-w-xl">
+                        <p className="text-base text-zinc-500 max-w-xl">
                             Quality refurbished IT equipment with certified data sanitization.
                         </p>
                     </div>
@@ -310,20 +311,20 @@ export default function InventoryPage() {
             </section>
 
             {/* Main Content */}
-            <section className="py-8 min-h-screen">
+            <section className="py-4 flex-1">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <GradingLegend />
 
                     {/* Search and Filter Bar */}
                     <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <div className="relative flex-1 group">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-emerald-500 transition-colors" />
                             <Input
                                 type="text"
-                                placeholder="Search products..."
+                                placeholder="Search inventory..."
                                 value={filters.search}
                                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                                className="pl-10 bg-neutral-900/50 border-neutral-800 text-white placeholder:text-neutral-500"
+                                className="h-10 pl-10 bg-white/[0.02] border-white/[0.05] text-white placeholder:text-zinc-600 focus-visible:ring-emerald-500/20 focus-visible:border-emerald-500/50 transition-all font-medium text-sm"
                             />
                         </div>
 
@@ -335,7 +336,7 @@ export default function InventoryPage() {
                                     Filters
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="left" className="w-80 bg-slate-950 border-neutral-800">
+                            <SheetContent side="left" className="w-80 bg-[#0e0e0e] border-neutral-800">
                                 <FilterSidebar
                                     categories={categories}
                                     filters={filters}
@@ -348,9 +349,9 @@ export default function InventoryPage() {
 
                     <div className="flex gap-8">
                         {/* Desktop Sidebar */}
-                        <div className="hidden lg:block w-64 flex-shrink-0">
-                            <div className="rounded-xl border border-neutral-800 bg-neutral-900/50 p-5 sticky top-24">
-                                <h3 className="text-lg font-semibold text-white mb-6">Filters</h3>
+                        <div className="hidden lg:block w-72 flex-shrink-0">
+                            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.01] backdrop-blur-xl p-8 sticky top-24">
+                                <h3 className="text-lg font-bold text-white mb-8 tracking-tight uppercase tracking-widest text-[10px] opacity-40">Filters</h3>
                                 <FilterSidebar
                                     categories={categories}
                                     filters={filters}
