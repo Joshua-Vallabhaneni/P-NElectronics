@@ -8,13 +8,21 @@ import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'P&N Electronics | Secure IT Asset Disposition',
-  description: 'Professional ITAD services for businesses. Certified data destruction, eco-friendly recycling, and global tech refurbishment. Turn your IT liabilities into assets.',
+  title: 'P&N Electronics',
+  description: 'Secure IT Asset Disposition',
   keywords: ['ITAD', 'IT Asset Disposition', 'e-waste recycling', 'data destruction', 'tech recycling', 'refurbished electronics'],
   openGraph: {
-    title: 'P&N Electronics | Secure IT Asset Disposition',
-    description: 'Professional ITAD services for businesses. Certified data destruction, eco-friendly recycling, and global tech refurbishment.',
+    title: 'P&N Electronics',
+    description: 'Secure IT Asset Disposition',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'P&N Electronics',
+      },
+    ],
   },
 };
 
