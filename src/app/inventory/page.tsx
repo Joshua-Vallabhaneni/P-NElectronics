@@ -315,7 +315,7 @@ export default function InventoryPage() {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <GradingLegend />
 
-                    {/* Search and Filter Bar */}
+                    {/* Search and Filter Bar  */}
                     <div className="flex flex-col sm:flex-row gap-4 mb-8">
                         <div className="relative flex-1 group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-emerald-500 transition-colors" />
