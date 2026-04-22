@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
     // Send the email
     const { error: emailError } = await resend.emails.send({
       from: 'P&N Electronics <onboarding@resend.dev>',
-      to: ['pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com'],
+      to: ['pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com', 'dilanparikh28@gmail.com'],
       subject: `New Quote Request: ${quantity}x ${category} from ${contact_name}`,
       html: emailHtml,
     });

@@ -8,7 +8,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
-const ADMIN_EMAILS = ['pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com'];
+const ADMIN_EMAILS = ['pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com', 'dilanparikh28@gmail.com'];
 
 interface AuthContextType {
     user: User | null;

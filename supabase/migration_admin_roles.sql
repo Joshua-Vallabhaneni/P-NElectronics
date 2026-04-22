@@ -12,7 +12,7 @@ BEGIN
     NEW.id,
     NEW.email,
     NEW.raw_user_meta_data->>'full_name',
-    CASE WHEN NEW.email IN ('pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com')
+    CASE WHEN NEW.email IN ('pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com', 'dilanparikh28@gmail.com')
          THEN 'admin' ELSE 'user' END
   );
   RETURN NEW;
@@ -21,7 +21,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 2. Update existing admin users (run if already signed up)
 UPDATE user_profiles SET role = 'admin'
-WHERE email IN ('pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com');
+WHERE email IN ('pjvallabhaneni@gmail.com', 'pnelectronicsllc@gmail.com', 'dilanparikh28@gmail.com');
 
 -- 3. Allow admins to read all user profiles (for role checks)
 CREATE POLICY "Admins can view all profiles"
